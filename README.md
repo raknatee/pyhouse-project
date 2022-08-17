@@ -6,7 +6,7 @@
 
 ## Setup
 ```sh
-pipenv install
+docker swarm init --advertise-addr='xxx.xxx.xxx.xxx'
 ```
 
 ## Creates list of user

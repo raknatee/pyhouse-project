@@ -28,9 +28,6 @@ def main(mode:str)->None:
             building_cmd:str
             if dockerimage == "base":
                 building_cmd=f"""image: brainlab-baseimage:{tag}-0.0.1"""
-                
-
-            
                 with open(os.path.join('./container-template','docker-compose.txt'),"r") as docker_compose:
                     docker_compose_str = replaction_string(docker_compose.read(),building_cmd,user_id)
 
@@ -46,20 +43,19 @@ def main(mode:str)->None:
                         dockerfile_path = os.path.join("./container-template","base-gpu.Dockerfile")                     
                         subprocess.run(f"docker build -t brainlab-baseimage:{tag}-0.0.1 -f {dockerfile_path} .", shell=True, check=True)
                         is_first_buildimage_gpu = not is_first_buildimage_gpu
-                
-
+        
             if dockerimage == "custom":
-                building_cmd=f"""build:
-      context: ../../user-custom-dockerfile
-      dockerfile: {tag}.Dockerfile"""
+                building_cmd=f"""image: brainlab-custom:{tag}"""
                 with open(os.path.join('./container-template','docker-compose.txt'),"r") as docker_compose:
-                    docker_compose_str = replaction_string(docker_compose.read(),building_cmd,user_id)
-            docker_compose_path = os.path.join("./compose-files",secret_folder,f"{user_id}-compose.yml")
+                    docker_compose_str = replaction_string(docker_compose.read(),building_cmd,user_id)           
+                print(f"docker build -t brainlab-custom:{tag} -f ./user-custom-dockerfile/{tag}.Dockerfile .")
+                subprocess.run(f"docker build -t brainlab-custom:{tag} -f ./user-custom-dockerfile/{tag}.Dockerfile .", shell=True, check=True)
 
-            
+            docker_compose_path:str = os.path.join("./compose-files",secret_folder,f"{user_id}-compose.yml")
             with open(docker_compose_path,"w") as output_compose:
                 output_compose.write(docker_compose_str)
-        
+            
+
 def replaction_string(string:str,build_image_cmd:str,user_id:str)->str:
     user_volume:str = user_id.split("-")[0]
     return string.replace("--building_cmd--",build_image_cmd).replace("--user_id--",user_id).replace("--user_volume--",user_volume)

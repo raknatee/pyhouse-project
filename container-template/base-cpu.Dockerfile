@@ -30,6 +30,7 @@ RUN pipenv install "mypy==0.910" --ignore-pipfile
 RUN pipenv install "pytest==6.2.5" --ignore-pipfile
 RUN pipenv install "mne==0.23.4" --ignore-pipfile
 RUN pipenv install "scipy==1.9.0" --ignore-pipfile
+RUN pipenv install mypy --ignore-pipfile
 
 
 
