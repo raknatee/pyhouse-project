@@ -39,12 +39,10 @@ services:
     secrets:
       - all_db_user.txt
       - all_db_password.txt
-      - email_app_password.json
+
 
 secrets:
   all_db_user.txt:
     file: ../../secret/dev/all_db_user.txt
   all_db_password.txt:
     file: ../../secret/dev/all_db_password.txt
-  email_app_password.json:
-    file: ../../secret/prod/email_app_password.json

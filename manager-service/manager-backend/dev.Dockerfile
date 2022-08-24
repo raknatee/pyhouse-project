@@ -35,8 +35,9 @@ RUN pip3 install pipenv
 
 
 
+WORKDIR /app
 
-
+RUN mkdir /app/.venv
 RUN pipenv --python 3.10
 RUN pipenv install "uvicorn[standard]"
 RUN pipenv install fastapi==0.79.0
@@ -47,13 +48,10 @@ RUN pipenv install requests
 RUN pipenv install docker
 
 
-WORKDIR /home/src
 
+COPY ./src ./src
 
+# CMD tail -f /dev/null
+EXPOSE 8000
 
-
-COPY ./src .
-
-CMD tail -f /dev/null
-
-# CMD uvicorn main:app --host 0.0.0.0 --reload
+CMD pipenv run uvicorn src.main:app --host 0.0.0.0 --reload

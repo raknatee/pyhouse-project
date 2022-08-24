@@ -25,9 +25,12 @@ services:
     image: manager-backend:0.0.1
     
     volumes:
-      - ../../manager-service/manager-backend/src:/home/src
+      - ../../manager-service/manager-backend/src:/app/src
       - ../../.vscode-server/vscode-manager-backend:/root/.vscode-server
+
+
       - /var/run/docker.sock:/var/run/docker.sock
+      - container-file:/container-file
 
 
     
@@ -39,7 +42,7 @@ services:
     secrets:
       - all_db_user.txt
       - all_db_password.txt
-      - email_app_password.json
+
 
   coredb: 
     image: mongo:5.0.9-focal
@@ -60,11 +63,10 @@ services:
 
 volumes:
   coredb-volume:
+  container-file:
 
 secrets:
   all_db_user.txt:
     file: ../../secret/dev/all_db_user.txt
   all_db_password.txt:
     file: ../../secret/dev/all_db_password.txt
-  email_app_password.json:
-    file: ../../secret/prod/email_app_password.json

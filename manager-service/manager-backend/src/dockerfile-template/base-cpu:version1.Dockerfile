@@ -1,4 +1,5 @@
 FROM ubuntu:20.04
+WORKDIR /home/container
 
 
 RUN apt update -y && apt upgrade -y
@@ -15,28 +16,28 @@ RUN apt install python3-pip -y
 RUN apt install python3.10-distutils -y
 RUN pip3 install pipenv
 
+RUN mkdir /home/container/.venv
 RUN pipenv --python 3.10
 
 RUN pipenv install ipython==6.5.0
 RUN pipenv install jupyterlab==3.4.4
-RUN pipenv install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 --ignore-pipfile
-RUN pipenv install 'pillow' --ignore-pipfile
-RUN pipenv install opencv-python==4.6.0.66 --ignore-pipfile
-RUN pipenv install "sklearn" --ignore-pipfile
-RUN pipenv install "pandas" --ignore-pipfile
-RUN pipenv install "seaborn" --ignore-pipfile
-RUN pipenv install "matplotlib" --ignore-pipfile
-RUN pipenv install "mypy==0.910" --ignore-pipfile
-RUN pipenv install "pytest==6.2.5" --ignore-pipfile
-RUN pipenv install "mne==0.23.4" --ignore-pipfile
-RUN pipenv install "scipy==1.9.0" --ignore-pipfile
-RUN pipenv install mypy --ignore-pipfile
+RUN pipenv install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 
+RUN pipenv install 'pillow' 
+RUN pipenv install opencv-python==4.6.0.66 
+RUN pipenv install "sklearn" 
+RUN pipenv install "pandas" 
+RUN pipenv install "seaborn" 
+RUN pipenv install "matplotlib" 
+RUN pipenv install "mypy==0.910" 
+RUN pipenv install "pytest==6.2.5" 
+RUN pipenv install "mne==0.23.4" 
+RUN pipenv install "scipy==1.9.0" 
 
 
 
 
 
-WORKDIR /home/container
+
 
 
 # COPY ./jupyter_config /root/.jupyter

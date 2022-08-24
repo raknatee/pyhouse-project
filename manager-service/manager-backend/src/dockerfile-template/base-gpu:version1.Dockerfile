@@ -1,4 +1,5 @@
 FROM tensorflow/tensorflow:2.6.0
+WORKDIR /home/container
 
 
 RUN apt update -y && apt upgrade -y
@@ -15,11 +16,11 @@ RUN apt install python3-pip -y
 RUN apt install python3.10-distutils -y
 RUN pip3 install pipenv
 
+
+
+RUN mkdir /home/container/.venv
 RUN pipenv --python 3.10
 
-
-WORKDIR /home/container
-RUN mkdir .venv
 
 RUN pipenv install ipython==6.5.0
 RUN pipenv install jupyterlab==3.4.4
@@ -34,7 +35,7 @@ RUN pipenv install "mypy==0.910"
 RUN pipenv install "pytest==6.2.5" 
 RUN pipenv install "mne==0.23.4" 
 RUN pipenv install "scipy==1.9.0" 
-RUN pipenv install mypy 
+
 
 
 
