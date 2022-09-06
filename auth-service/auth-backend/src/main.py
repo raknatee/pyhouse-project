@@ -21,16 +21,7 @@ import os
 password_hasher = PasswordHasher()
 MongoService.init_db()
 app = FastAPI(docs_url=None)
-origins = [
-    os.environ["HOST"]
-]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 class UserInput(BaseModel):
     username: str
@@ -88,21 +79,7 @@ def login(username: str, password: str, resp:Response)->dict:
     if q is None:
         raise HTTPException(400, detail="username and password are incorrect.")
     user = User(**q)
-    if user.alg != LASTEST_PASSWORD_ALG:
-        try:
-            if user.alg == 'wp':
-                new_hash: str = wp_rehash(user.password, password)
-                user = User(**MongoService.get_user_collection_instance().find_one_and_update(
-                    {"username": username},
-                    {'$set': {'password': new_hash,'alg':LASTEST_PASSWORD_ALG}},
-                    return_document=pymongo.ReturnDocument.AFTER
-                ))
-
-
-        except RehashCannotVerify:
-            raise HTTPException(400, detail="username and password are incorrect.")
-
-
+    
     try:
         password_hasher.verify(user.password, password)
     except (argon2.exceptions.InvalidHash,argon2.exceptions.VerifyMismatchError):
@@ -119,15 +96,7 @@ def login(username: str, password: str, resp:Response)->dict:
     return {"result":1}
 
 
-class RehashCannotVerify(RuntimeError):
-    pass
 
-
-def wp_rehash(stored_password: str, password: str) -> str:
-
-    if not phpass.verify(password, stored_password):
-        raise RehashCannotVerify()
-    return password_hasher.hash(password)
 
 
 class ForgetMypasswordInput(BaseModel):
@@ -191,12 +160,23 @@ def hash_verify(hash1: str, hash2: str) -> bool:
 
 
 
-
-
-@app.get('/authc/who_are_they')
-def get_user_id_by_session_id( head:str=Header(default="",alias="X-Forwarded-Uri"), session_id:str = Cookie(default="")):
-    username = head.split("/")[1]
+def update_session(session_id:str):
+    q = MongoService.get_user_session_instance().find_one_and_update(
+        {
+            "session_id": hash_function(session_id)
+        },
+        {
+            "$set":{"created_time":datetime.utcnow()}
+        }
     
+    )
+    if q is None:
+        raise HTTPException(404,"session not found")
+
+@app.get('/internal/container/auth')
+def container_auth( head:str=Header(default="",alias="X-Forwarded-Uri"), session_id:str = Cookie(default="")):
+    username = head.split("/")[2]
+    container_name:str = head.split("/")[3]
   
     user = MongoService.get_user_session_instance().find_one({"session_id":hash_function(session_id)})
     if user is None:
@@ -210,16 +190,29 @@ def get_user_id_by_session_id( head:str=Header(default="",alias="X-Forwarded-Uri
     if q_username != username:
         raise HTTPException(404,"session not found")
 
-    q = MongoService.get_user_session_instance().find_one_and_update(
-        {
-            "session_id": hash_function(session_id)
-        },
-        {
-            "$set":{"created_time":datetime.utcnow()}
-        }
-    
-    )
-    if q is None:
-        raise HTTPException(404,"session not found")
+    update_session(session_id)
+
     return {"user_id":q['user_id']}
+    
+@app.get('/internal/who_are_they')
+def who_are_they(session_id:str):
+    q_session = MongoService.get_user_session_instance().find_one({
+        "session_id":hash_function(session_id)
+    })
+    if q_session is None:
+        raise HTTPException(404,"session not found")
+    update_session(session_id)
+    user_id = q_session["user_id"]
+
+    q_user = MongoService.get_user_collection_instance().find_one({
+        "user_id":user_id
+    })
+    if q_user is None:
+        raise HTTPException(404,"user not found")
+    username = q_user["username"]
+    return {
+        "user_id":user_id,
+        "username":username
+    }
+
     

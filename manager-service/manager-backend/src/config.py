@@ -1,0 +1,1 @@
+BASE_PATH:str = "/manager/api"

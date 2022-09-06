@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from main import app, UserInput,wp_rehash
+from main import app
 from mongo_service import MongoService
 test_client = TestClient(app)
 

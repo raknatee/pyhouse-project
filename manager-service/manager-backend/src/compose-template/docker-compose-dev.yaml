@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+   user-container-{container_name}:
+    image: {image_name}
+
+    volumes:
+      -  {username}-volume:/home/container/src
+      - {username}-vscode-server/.vscode-server/{container_name}:/root/.vscode-server
+    command: pipenv run jupyter lab --ip='*' --port=8888 --no-browser  --allow-root --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.base_url=/container/{username}/{container_name}
+
+    labels:
+      - "traefik.http.middlewares.auth.forwardauth.address=http://auth-backend:8000/internal/container/auth"
+      - "traefik.http.routers.{container_name}.middlewares=auth"
+
+
+
+
+      - "traefik.http.routers.{container_name}.rule=PathPrefix(`/container/{username}/{container_name}`)"
+      - "traefik.http.routers.{container_name}.service={container_name}"
+      - "traefik.http.routers.{container_name}.entrypoints=web"
+      - "traefik.http.services.{container_name}.loadbalancer.server.port=8888"
+
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           # count: 1
+    #           capabilities: [gpu]
+volumes:
+   {username}-volume:
+   {username}-vscode-server:

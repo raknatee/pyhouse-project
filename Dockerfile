@@ -34,26 +34,25 @@ RUN apt install python3.10-distutils -y
 RUN pip3 install pipenv
 
 
+RUN echo "alias pyv='pipenv run python'" >> ~/.bashrc
+
 
 WORKDIR /app
-
-RUN mkdir /app/.venv
+RUN mkdir .venv
 RUN pipenv --python 3.10
-RUN pipenv install "uvicorn[standard]"
-RUN pipenv install fastapi==0.79.0
-RUN pipenv install pymongo==4.2.0
+
+
 RUN pipenv install mypy
-RUN pipenv install pytest
 RUN pipenv install requests
 RUN pipenv install docker
 RUN pipenv install types-requests
 
-RUN echo "alias pyv='pipenv run python'" >> /root/.bashrc
-
-COPY ./src ./src
-
 WORKDIR /app/src
-# CMD tail -f /dev/null
-EXPOSE 8000
+COPY . .
 
-CMD pipenv run uvicorn main:app --host 0.0.0.0 --reload
+WORKDIR /app/src/starter
+
+
+CMD tail -f /dev/null
+
+

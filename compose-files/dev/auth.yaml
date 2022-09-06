@@ -1,22 +1,22 @@
 version: '3.8'
 
 services:
-  auth-frontend:
+
+  pyhouse-frontend:
     build:
-      context: ../../auth-service/auth-frontend
+      context: ../../pyhouse-service/pyhouse-frontend
       dockerfile: dev.Dockerfile
-    image: auth-frontend:0.0.1
+    image: pyhouse-frontend:0.0.1
     volumes:
-      - ../../auth-service/auth-frontend/app:/home/app
+      - ${ROOT_PROJECT}/pyhouse-service/pyhouse-frontend/app:/home/app
       - /home/app/node_modules
-      - ../../.vscode-server/.vscode-auth-frontend:/root/.vscode-server
+      - ${ROOT_PROJECT}/.vscode-server/vscode-pyhouse-frontend:/root/.vscode-server
 
     labels:
-      - "traefik.http.routers.auth-frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.auth-frontend.service=auth-frontend"
-      - "traefik.http.routers.auth-frontend.entrypoints=web"
-      - "traefik.http.services.auth-frontend.loadbalancer.server.port=80"
-
+      - "traefik.http.routers.pyhouse-frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.pyhouse-frontend.service=pyhouse-frontend"
+      - "traefik.http.routers.pyhouse-frontend.entrypoints=web"
+      - "traefik.http.services.pyhouse-frontend.loadbalancer.server.port=80"
 
   auth-backend:
     build:
@@ -27,8 +27,8 @@ services:
     env_file:
       - ../../auth-service/auth-backend/dev.env
     volumes:
-      - ../../auth-service/auth-backend/src:/home/src
-      - ../../.vscode-server/vscode-auth-backend:/root/.vscode-server
+      - ${ROOT_PROJECT}/auth-service/auth-backend/src:/home/src
+      - ${ROOT_PROJECT}/.vscode-server/vscode-auth-backend:/root/.vscode-server
 
     
     labels:

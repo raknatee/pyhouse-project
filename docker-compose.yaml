@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+
+  starter:
+    build: .
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      # remove in future
+      - ./:/app/src/
+
+      - ./.vscode-server/pyhouse-starter:/root/.vscode-server
+    environment:
+      - ROOT_PROJECT=${PWD}
