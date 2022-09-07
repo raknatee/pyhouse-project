@@ -34,5 +34,5 @@ def get_pyhose_image()->dict[str,list[str]]:
 from service.UserServices.UserServiceApp import app as user_service_app
 app.include_router(user_service_app)
 
-from service.ContainerService.CreateContainerApp import app as docker_service_app
+from service.ContainerService.ContainerApp import app as docker_service_app
 app.include_router(docker_service_app)

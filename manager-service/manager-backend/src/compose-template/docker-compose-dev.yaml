@@ -5,7 +5,7 @@ services:
 
     volumes:
       -  {username}-volume:/home/container/src
-      - {username}-vscode-server/.vscode-server/{container_name}:/root/.vscode-server
+      - {container_name}-vscode-server:/root/.vscode-server
     command: pipenv run jupyter lab --ip='*' --port=8888 --no-browser  --allow-root --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.base_url=/container/{username}/{container_name}
 
     labels:
@@ -29,4 +29,4 @@ services:
     #           capabilities: [gpu]
 volumes:
    {username}-volume:
-   {username}-vscode-server:
+   {container_name}-vscode-server:

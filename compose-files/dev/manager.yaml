@@ -33,7 +33,7 @@ services:
       - container-file:/container-file
 
     environment:
-      - ROOT_PROJECT=${ROOT_PROJECT}
+      - app_mode=dev
     
     labels:
       - "traefik.http.routers.manager-backend.rule=PathPrefix(`/manager/api`)"

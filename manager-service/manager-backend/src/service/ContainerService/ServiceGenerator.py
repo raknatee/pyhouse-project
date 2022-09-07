@@ -1,7 +1,7 @@
 import subprocess
 import random
 import os
-from service.ContainerService.CreateContainerApp import ComposeMode
+from service.ContainerService.ContainerApp import ComposeMode
 
 
 def create_service(mode:ComposeMode,image_name:str,username:str):
@@ -16,7 +16,6 @@ def create_service(mode:ComposeMode,image_name:str,username:str):
                 .replace("{container_name}",container_name)
                 .replace("{image_name}",image_name)
                 .replace("{username}",username)
-                .replace("{ROOT_PROJECT}",os.environ["ROOT_PROJECT"])
             )
 
     subprocess.run(f"docker stack deploy pyhouse -c /tmp/{filename}.yaml", shell=True, check=True)
