@@ -39,6 +39,17 @@ def search_containers_endpoit(req:Request):
 
     return {"services":search_containers(username)}
 
+@app.get(BASE_PATH+"/container")
+def get_container_status_endpoit(req:Request,filter_name:str):
+    # TODO:  authz
+    username = check_and_get_client_info(req).username
+    for container in docker_client.containers.list():
+        if filter_name in container.attrs['Name']:
+            return {"ok":True}
+        
+
+    raise HTTPException(404)
+
 def search_containers(username:str)->list[tuple[str,str]]:
 
     containers = docker_client.services.list()
