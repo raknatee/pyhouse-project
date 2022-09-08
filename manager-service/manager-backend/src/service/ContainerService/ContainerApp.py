@@ -5,7 +5,7 @@ import requests
 from pydantic import BaseModel
 
 from config import APPLICATION_MODE, BASE_PATH
-from service.ContainerService.ComposeMode import ComposeMode
+
 from service.ContainerService.ServiceGenerator import create_service
 from service.UserServices.UserAuthc import check_and_get_client_info
 

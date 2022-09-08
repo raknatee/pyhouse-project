@@ -4,6 +4,7 @@ from enum import Enum
 
 class ComposeMode(Enum):
     DEV = "DEV"
+    PROD_WITHOUT_TLS = "PROD_WITHOUT_TLS"
     PROD = "PROD"
 
     @staticmethod

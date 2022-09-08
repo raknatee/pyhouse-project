@@ -36,23 +36,24 @@ RUN pip3 install pipenv
 
 
 WORKDIR /app
-RUN mkdir .venv
+
+RUN mkdir /app/.venv
 RUN pipenv --python 3.10
-
-
+RUN pipenv install "uvicorn[standard]"
+RUN pipenv install fastapi==0.79.0
+RUN pipenv install pymongo==4.2.0
 RUN pipenv install mypy
+RUN pipenv install pytest
 RUN pipenv install requests
 RUN pipenv install docker
 RUN pipenv install types-requests
 
+RUN echo "alias pyv='pipenv run python'" >> /root/.bashrc
+
+COPY ./src ./src
+
 WORKDIR /app/src
-COPY . .
+# CMD tail -f /dev/null
+EXPOSE 8000
 
-RUN cat ./starter/linux/extended_bashrc.sh >> ~/.bashrc
-
-WORKDIR /app/src/starter
-
-
-CMD tail -f /dev/null
-
-
+CMD pipenv run uvicorn main:app --host 0.0.0.0

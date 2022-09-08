@@ -4,8 +4,7 @@
   <div class="nar">
     <p>I'm {{username}}</p>
     <router-link to="/login">Login</router-link>
-  <router-link to="/register">Register</router-link>
-  <router-link to="/forget-mypassword">Forget password</router-link>
+  <router-link to="/new-mypassword">new password (Coming soon)</router-link>
   </div>
 
 

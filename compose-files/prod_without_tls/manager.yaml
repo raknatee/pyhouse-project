@@ -1,48 +1,26 @@
 version: '3.8'
 
 services:
-  # manager-frontend:
-  #   build:
-  #     context:  ${ROOT_PROJECT}/manager-service/manager-frontend
-  #     dockerfile: dev.Dockerfile
-  #   image: manager-frontend:0.0.1
-  #   volumes:
-  #     -  ${ROOT_PROJECT}/manager-service/manager-frontend/app:/home/app
-  #     - /home/app/node_modules
-  #     -  ${ROOT_PROJECT}/.vscode-server/.vscode-manager-frontend:/root/.vscode-server
-
-  #   labels:
-  #     - "traefik.http.routers.manager-frontend.rule=PathPrefix(`/`)"
-  #     - "traefik.http.routers.manager-frontend.service=manager-frontend"
-  #     - "traefik.http.routers.manager-frontend.entrypoints=web"
-  #     - "traefik.http.services.manager-frontend.loadbalancer.server.port=80"
+  
   admin-shell:
     build: ../../admin-shell
     image: admin-shell:0.0.1
-    volumes:
-
-      # remove in future
-      - ${ROOT_PROJECT}/admin-shell/src/:/admin-shell/src/
-      - ${ROOT_PROJECT}/.vscode-server/vscode-admin-shell:/root/.vscode-server
-
+   
 
 
   manager-backend:
     build:
       context:  ../../manager-service/manager-backend
-      dockerfile: dev.Dockerfile
+      dockerfile: prod.Dockerfile
     image: manager-backend:0.0.1
     
     volumes:
-      -  ${ROOT_PROJECT}/manager-service/manager-backend/src:/app/src
-      -  ${ROOT_PROJECT}/.vscode-server/vscode-manager-backend:/root/.vscode-server
-
-
+   
       - /var/run/docker.sock:/var/run/docker.sock
       - container-file:/container-file
 
     environment:
-      - app_mode=dev
+      - app_mode=prod_without_tls
     
     labels:
       - "traefik.http.routers.manager-backend.rule=PathPrefix(`/manager/api`)"

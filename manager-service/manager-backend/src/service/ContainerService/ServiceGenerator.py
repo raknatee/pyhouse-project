@@ -1,14 +1,14 @@
 import subprocess
 import random
 import os
-from service.ContainerService.ContainerApp import ComposeMode
+from service.ContainerService.ComposeMode import ComposeMode
 
 
 def create_service(mode:ComposeMode,image_name:str,username:str):
     filename = random.randint(0,9999)
     container_name:str = f"{username}-{filename}"
     with open(f"/tmp/{filename}.yaml","w") as docker_compose_file:
-        with open(f"./compose-template/docker-compose-{mode.value}.yaml","r") as template:
+        with open(f"./compose-template/docker-compose-{mode.value.lower()}.yaml","r") as template:
             compose_template = template.read()
 
             docker_compose_file.write(

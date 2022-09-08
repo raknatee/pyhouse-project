@@ -5,13 +5,11 @@ services:
   pyhouse-frontend:
     build:
       context: ../../pyhouse-service/pyhouse-frontend
-      dockerfile: dev.Dockerfile
+      dockerfile: prod.Dockerfile
     image: pyhouse-frontend:0.0.1
     volumes:
-      - ${ROOT_PROJECT}/pyhouse-service/pyhouse-frontend/app:/home/app
       - /home/app/node_modules
-      - ${ROOT_PROJECT}/.vscode-server/vscode-pyhouse-frontend:/root/.vscode-server
-
+    
     labels:
       - "traefik.http.routers.pyhouse-frontend.rule=PathPrefix(`/`)"
       - "traefik.http.routers.pyhouse-frontend.service=pyhouse-frontend"
@@ -21,14 +19,11 @@ services:
   auth-backend:
     build:
       context: ../../auth-service/auth-backend
-      dockerfile: dev.Dockerfile
+      dockerfile: prod.Dockerfile
     image: auth-backend:0.0.1
     
 
-    volumes:
-      - ${ROOT_PROJECT}/auth-service/auth-backend/src:/home/src
-      - ${ROOT_PROJECT}/.vscode-server/vscode-auth-backend:/root/.vscode-server
-
+  
     
     labels:
       - "traefik.http.routers.auth-backend.rule=PathPrefix(`/auth/api`)"

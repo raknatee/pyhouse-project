@@ -1,4 +1,4 @@
-import os
+
 BASE_PATH = "/auth/api"
 LASTEST_PASSWORD_ALG = "argon2-cffi"
 
@@ -8,6 +8,3 @@ USER_COLLECTION_NAME = 'users'
 FORGOT_PASSWORD_TOKEN_COLLECTION_NAME = 'forget-password-token'
 USER_SESSION_COLLECTION_NAME = 'user-session'
 
-URL_RESET_EMAIL = os.environ['HOST']
-
-DOMAIN = os.environ['HOST'].replace("http://","").replace("https://","")

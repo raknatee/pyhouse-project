@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException, Response, Cookie, Request, Header
 from fastapi.responses import RedirectResponse
 import pymongo
 from pymongo.errors import DuplicateKeyError
-from config import BASE_PATH, DOMAIN, LASTEST_PASSWORD_ALG, URL_RESET_EMAIL
+from config import BASE_PATH, LASTEST_PASSWORD_ALG
 from pydantic import BaseModel
 from mongo_service import MongoService
 from datetime import datetime
@@ -55,7 +55,7 @@ class User(UserInput):
         MongoService.get_user_collection_instance().insert_one(data)
 
 
-@app.post(BASE_PATH+"/register")
+@app.post("/internal/register")
 def register(user_input: UserInput):
     try:
         User.from_user_input(user_input).save_to_db()
@@ -98,49 +98,13 @@ def login(username: str, password: str, resp:Response)->dict:
 
 
 
-
-class ForgetMypasswordInput(BaseModel):
-    username: str
-
-
-@app.post(BASE_PATH+"/forget-mypassword")
-def forget_mypassword(forget_input: ForgetMypasswordInput):
-    token: str = secrets.token_urlsafe(32)
-    q = MongoService.get_user_collection_instance().find_one(
-        {"username": forget_input.username})
-    if q is None:
-        raise HTTPException(404, detail="username not found")
-
-    print(
-        f"token reset password link: {URL_RESET_EMAIL}/auth/#/reset-password?token={token}")
-    # TODO: email to user
-
-    token_in_db: str = hash_function(token)
-    MongoService.get_forget_password_token_instance().insert_one({
-        "user_id": q['user_id'],
-        "token": token_in_db,
-        "created_time":datetime.utcnow()
-    })
-    return {"result":1}
-
-
-class ResetPasswordInput(BaseModel):
-    token: str
-    new_password: str
-
-
-@app.put(BASE_PATH+"/forget-mypassword/reset")
-def forget_mypassword_verify_token(session: ResetPasswordInput):
-    q = MongoService.get_forget_password_token_instance().find_one_and_delete({
-        "token": hash_function(session.token)
-    })
-    if q is None:
-        raise HTTPException(404, detail="token not found")
-    user_id: str = q['user_id']
+@app.put("/internal/reset-password")
+def forget_mypassword_verify_token(username:str,new_password:str):
+    
     
     q = MongoService.get_user_collection_instance().find_one_and_update(
-        {"user_id": user_id},
-        {"$set": {"password": password_hasher.hash(session.new_password),
+        {"username": username},
+        {"$set": {"password": password_hasher.hash(new_password),
         'alg':LASTEST_PASSWORD_ALG}}
     )
     if q is None:
