@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from config import APPLICATION_MODE, BASE_PATH
 
 from service.ContainerService.ServiceGenerator import create_service
+from service.ContainerService.ServiceRemove import remove_service
 from service.UserServices.UserAuthc import check_and_get_client_info
 
 app = APIRouter()
@@ -50,6 +51,16 @@ def get_container_status_endpoit(req:Request,filter_name:str):
 
     raise HTTPException(404)
 
+@app.delete(BASE_PATH+"/container")
+def remove_service_endpoint(req:Request,filter_name:str):
+    # TODO: authz
+    username = check_and_get_client_info(req)
+    ok:bool = remove_service(filter_name)
+    if not ok:
+        raise HTTPException(400)
+    return {"result":1}
+
+
 def search_containers(username:str)->list[tuple[str,str]]:
 
     containers = docker_client.services.list()
@@ -64,5 +75,5 @@ def search_containers(username:str)->list[tuple[str,str]]:
 
     return returned 
 
-    
+
     

@@ -1,9 +1,13 @@
-FROM nvidia/cuda:11.6.0-devel-ubuntu20.04
+FROM ubuntu:20.04
 WORKDIR /home/container
 ENV TZ="Asia/Bangkok"
+ENV DEBIAN_FRONTEND="noninteractive"
 
 RUN apt update -y && apt upgrade -y
-ENV DEBIAN_FRONTEND="noninteractive"
+RUN apt install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN mkdir /root/.ssh/
+EXPOSE 22 8888
 
 RUN apt install -yfm --no-install-recommends libgl1-mesa-glx libgtk2.0-dev
 
@@ -36,6 +40,4 @@ RUN pipenv install scipy==1.9.0
 
 WORKDIR /home/container/src
 
-# COPY ./jupyter_config /root/.jupyter
 CMD tail -f /dev/null
-# CMD pipenv run jupyter lab --ip='*' --port=8888 --no-browser  --allow-root --NotebookApp.token='' --NotebookApp.password=''

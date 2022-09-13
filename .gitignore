@@ -1,5 +1,7 @@
 
 .DS_Store
+key
+key.pub
 data
 secret/prod
 user-custom-dockerfile

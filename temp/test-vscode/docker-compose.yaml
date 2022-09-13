@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+   temp:
+    image: pyhouse-image-global-base-cpu:version1
+
+  
+    # command: ["bash","service ssh start; pipenv run jupyter lab --ip='*' --port=8888 --no-browser  --allow-root --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.base_url=/container/{username}/{container_name}"]
+    command: pipenv run jupyter lab --ip='*' --port=8888 --no-browser  --allow-root --NotebookApp.token='' --NotebookApp.password=''
+
+    ports:
+      - 8888:8888
+      - 8000:8000
+   

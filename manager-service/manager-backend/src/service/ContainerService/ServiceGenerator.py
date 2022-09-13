@@ -1,7 +1,9 @@
 import subprocess
 import random
 import os
+from typing import Any
 from service.ContainerService.ComposeMode import ComposeMode
+from fastapi import HTTPException
 
 
 def create_service(mode:ComposeMode,image_name:str,username:str):
@@ -17,5 +19,9 @@ def create_service(mode:ComposeMode,image_name:str,username:str):
                 .replace("{image_name}",image_name)
                 .replace("{username}",username)
             )
-
-    subprocess.run(f"docker stack deploy pyhouse -c /tmp/{filename}.yaml", shell=True, check=True)
+    
+    try:
+        resp = subprocess.run(f"docker stack deploy pyhouse -c /tmp/{filename}.yaml", shell=True)
+    except subprocess.CalledProcessError:
+        print(f"{resp.stderr=}")
+        raise HTTPException(501)

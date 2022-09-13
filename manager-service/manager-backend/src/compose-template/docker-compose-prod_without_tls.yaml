@@ -10,11 +10,8 @@ services:
 
     labels:
       - "traefik.http.middlewares.auth.forwardauth.address=http://auth-backend:8000/internal/container/auth"
+      
       - "traefik.http.routers.{container_name}.middlewares=auth"
-
-
-
-
       - "traefik.http.routers.{container_name}.rule=PathPrefix(`/container/{username}/{container_name}`)"
       - "traefik.http.routers.{container_name}.service={container_name}"
       - "traefik.http.routers.{container_name}.entrypoints=web"

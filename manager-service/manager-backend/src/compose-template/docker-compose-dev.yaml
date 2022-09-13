@@ -6,19 +6,22 @@ services:
     volumes:
       -  {username}-volume:/home/container/src
       - {container_name}-vscode-server:/root/.vscode-server
-    command: pipenv run jupyter lab --ip='*' --port=8888 --no-browser  --allow-root --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.base_url=/container/{username}/{container_name}
+    command: ["bash",'-c',"service ssh start; pipenv run jupyter lab --ip='*' --port=8888 --no-browser  --allow-root --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.base_url=/container/{username}/{container_name} "]
 
     labels:
+      - "traefik.enable=true"
       - "traefik.http.middlewares.auth.forwardauth.address=http://auth-backend:8000/internal/container/auth"
+
       - "traefik.http.routers.{container_name}.middlewares=auth"
-
-
-
-
       - "traefik.http.routers.{container_name}.rule=PathPrefix(`/container/{username}/{container_name}`)"
       - "traefik.http.routers.{container_name}.service={container_name}"
       - "traefik.http.routers.{container_name}.entrypoints=web"
       - "traefik.http.services.{container_name}.loadbalancer.server.port=8888"
+
+    ports:
+      - "5555:22"
+
+    
 
     # deploy:
     #   resources:
